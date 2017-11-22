@@ -6,19 +6,18 @@ using System.Threading.Tasks;
 
 namespace GraduationTracker
 {
-    public partial class GraduationTracker
+    public partial class GraduationTracker : IGraduationTracker
     {   
-        public Tuple<bool, STANDING>  HasGraduated(Diploma diploma, Student student)
+        private double GetStudentCoursesAverage(Diploma diploma, Student student)
         {
             var credits = 0;
-            var average = 0;
-        
-            for(int i = 0; i < diploma.Requirements.Length; i++)
-            {
-                for(int j = 0; j < student.Courses.Length; j++)
-                {
-                    var requirement = Repository.GetRequirement(diploma.Requirements[i]);
+            double average = 0;
 
+            var requirements = diploma.Requirements.AsQueryable();
+            foreach(Requirement requirement in requirements)
+            {
+                for (int j = 0; j < student.Courses.Length; j++)
+                {
                     for (int k = 0; k < requirement.Courses.Length; k++)
                     {
                         if (requirement.Courses[k] == student.Courses[j].Id)
@@ -34,17 +33,13 @@ namespace GraduationTracker
             }
 
             average = average / student.Courses.Length;
+            return average;
+        }
 
-            var standing = STANDING.None;
-
-            if (average < 50)
-                standing = STANDING.Remedial;
-            else if (average < 80)
-                standing = STANDING.Average;
-            else if (average < 95)
-                standing = STANDING.MagnaCumLaude;
-            else
-                standing = STANDING.MagnaCumLaude;
+        public Tuple<bool, STANDING>  HasGraduated(Diploma diploma, Student student)
+        {
+            var average = GetStudentCoursesAverage(diploma, student);
+            var standing = StandingCalculator.GetStanding(average);
 
             switch (standing)
             {
