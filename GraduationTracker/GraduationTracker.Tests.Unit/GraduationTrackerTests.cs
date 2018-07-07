@@ -12,6 +12,8 @@ namespace GraduationTracker.Tests.Unit
         public void TestHasCredits()
         {
             var tracker = new GraduationTracker();
+            //const mockDataFactory = new MockDataFactory()
+                
 
             var diploma = new Diploma
             {
@@ -30,7 +32,7 @@ namespace GraduationTracker.Tests.Unit
                         new Course{Id = 1, Name = "Math", Mark=95 },
                         new Course{Id = 2, Name = "Science", Mark=95 },
                         new Course{Id = 3, Name = "Literature", Mark=95 },
-                        new Course{Id = 4, Name = "Physichal Education", Mark=95 }
+                        new Course{Id = 4, Name = "Physical Education", Mark=95 }
                    }
                },
                new Student
@@ -41,7 +43,7 @@ namespace GraduationTracker.Tests.Unit
                         new Course{Id = 1, Name = "Math", Mark=80 },
                         new Course{Id = 2, Name = "Science", Mark=80 },
                         new Course{Id = 3, Name = "Literature", Mark=80 },
-                        new Course{Id = 4, Name = "Physichal Education", Mark=80 }
+                        new Course{Id = 4, Name = "Physical Education", Mark=80 }
                    }
                },
             new Student
@@ -52,7 +54,7 @@ namespace GraduationTracker.Tests.Unit
                     new Course{Id = 1, Name = "Math", Mark=50 },
                     new Course{Id = 2, Name = "Science", Mark=50 },
                     new Course{Id = 3, Name = "Literature", Mark=50 },
-                    new Course{Id = 4, Name = "Physichal Education", Mark=50 }
+                    new Course{Id = 4, Name = "Physical Education", Mark=50 }
                 }
             },
             new Student
@@ -63,7 +65,7 @@ namespace GraduationTracker.Tests.Unit
                     new Course{Id = 1, Name = "Math", Mark=40 },
                     new Course{Id = 2, Name = "Science", Mark=40 },
                     new Course{Id = 3, Name = "Literature", Mark=40 },
-                    new Course{Id = 4, Name = "Physichal Education", Mark=40 }
+                    new Course{Id = 4, Name = "Physical Education", Mark=40 }
                 }
             }
 
@@ -78,11 +80,13 @@ namespace GraduationTracker.Tests.Unit
                 graduated.Add(tracker.HasGraduated(diploma, student));      
             }
 
-            
+            //properly written unit tests become the defacto documentation for a class
+
+            //original test case only checks if there are any items in the graduated list, which there will be by default as long
+            //as there are any students in the test data (regardless of their graduation status). 
+            //unclear what's being tested. Test name "TestHasCredits" doesn't relate in an obvious way to this test. 
             Assert.IsFalse(graduated.Any());
 
         }
-
-
     }
 }
