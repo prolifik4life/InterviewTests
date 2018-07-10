@@ -41,17 +41,22 @@ namespace GraduationTracker
 
         public static Requirement GetRequirement(int id)
         {
-            var requirements = GetRequirements();
-            Requirement requirement = null;
+            Requirement requirements = GetRequirements();
 
-            for (int i = 0; i < requirements.Length; i++)
-            {
-                if (id == requirements[i].Id)
-                {
-                    requirement = requirements[i];
-                }
-            }
-            return requirement;
+            Requirement result = requirements.Find(x => x.Id == id);
+            parts.Find(x => x.PartName.Contains("seat")));
+            return result;
+            //var requirements = GetRequirements();
+            //Requirement requirement = null;
+
+            //for (int i = 0; i < requirements.Length; i++)
+            //{
+            //    if (id == requirements[i].Id)
+            //    {
+            //        requirement = requirements[i];
+            //    }
+            //}
+            //return requirement;
         }
 
 
@@ -68,9 +73,9 @@ namespace GraduationTracker
             };
         }
 
-        public static Requirement[] GetRequirements()
+        private static List<Requirement> GetRequirements()
         {   
-                return new[]
+            return new List<Requirement>
                 {
                     new Requirement{Id = 100, Name = "Math", MinimumMark=50, Courses = new int[]{1}, Credits=1 },
                     new Requirement{Id = 102, Name = "Science", MinimumMark=50, Courses = new int[]{2}, Credits=1 },
@@ -78,6 +83,7 @@ namespace GraduationTracker
                     new Requirement{Id = 104, Name = "Physical Education", MinimumMark=50, Courses = new int[]{4}, Credits=1 }
                 };
         }
+
         private static Student[] GetStudents()
         {
             return new[]

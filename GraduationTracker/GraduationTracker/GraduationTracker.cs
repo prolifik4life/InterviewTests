@@ -7,68 +7,55 @@ using System.Threading.Tasks;
 namespace GraduationTracker
 {
     public partial class GraduationTracker
+
+    //General Requirements: 
+    // For a given student and diploma, need to determine whether they've graduated (met the requirements of the diploma)
+    // and calculate their standing based on their grade average
+
+    //Steps:
+    //Get list of diploma requirements
+    //For each requirement, get list of courses (remember that although the examples only show one, there could be several)
+    //For each requirement course in requirement, check if student has completed the course   
+    //If they have the required course, then 
+        //once applied to that requirement, it can not be used to fill another requirement) --> try to find a way to give unneeded credits 
+        //add the mark to the mark sum to calculate their average
+        //if their grade in the course was sufficient to pass, 
+            //add the credit to the list of credits for the given requirement
+    // After going through requirement, check if student credits for requirement is greater than or equal to requirement credits
+    //If so, we'll need to track that they passed the requirement? Or failed it.
+    // After going through requirements, calculate average, and use average to calculate standing. 
+    // Check if standing is sufficient to graduate, as well as checking if all requirements have been met.
+
+//* There is a missing check
+//* A studentmust fulfill all requirements(i.e.they must have a course(s)
+//that has enough credits to fill a given requirement, and once applied to that requirement, it can not be used to fill another requirement)
+//* There can be multiple courses per requirement.
+//* A requirement is considered complete when any number of courses it
+//contains have been completed so that the total number of course credits is greater than or equal to the number of requirement credits.
+//* No the student does not need to have received the minimum mark in all
+//courses a requirement contains.Only in enough courses to have a number of credits equal to or greater than the number of credits in the requirement.
+
+
     {   
-        //will output boolean of whether student has graduated, and with what standing given diploma and student as inputs
-        public Tuple<bool, STANDING>  HasGraduated(Diploma diploma, Student student)
+    // For a given student and diploma, determines whether they've graduated (met the requirements of the diploma)
+    // and their standing based on their grade average
+        public Tuple<bool, Standing>  HasGraduated(Diploma diploma, Student student)
         {
-            var credits = 0;
-            var average = 0;
-
-            //loop through list of requirements for the given diploma
-            for(int i = 0; i < diploma.Requirements.Length; i++)
-            {
-                //loop through the given student's course records
-                for(int j = 0; j < student.Courses.Length; j++)
-                {
-                    //find requirement that matches current diploma requirement 
-                    var requirement = Repository.GetRequirement(diploma.Requirements[i]);
-
-                    //loop through requirement courses (this could be multiple, though in examples there's only ever one)
-                    for (int k = 0; k < requirement.Courses.Length; k++)
-                    {
-                        //find the requirement course that matches the ID of the student course at the given index
-                        if (requirement.Courses[k] == student.Courses[j].Id)
-                        {
-                            //add the course mark for the current student course to the average var (will change)
-                            average += student.Courses[j].Mark;
-                            //if the given student course mark GREATER THAN minimum mark, requirement credits added to
-                            // student credits
-                            if (student.Courses[j].Mark > requirement.MinimumMark)
-                            {
-                                credits += requirement.Credits;
-                            }
-                        }
-                    }
+            //get requirements from diploma input
+            int[] requirements = diploma.Requirements;
+            getAllCourseRequirements
+            foreach(int requirement in requirements){
+                int reqCourse = 
+                foreach (int reqCourse in requirements){
+                    
                 }
             }
-            //sum / course length... not multiplied x100?
-            average = average / student.Courses.Length;
-
-            var standing = STANDING.None;
-            //set standing by average mark
-            if (average < 50)
-                standing = STANDING.Remedial;
-            else if (average < 80)
-                standing = STANDING.Average;
-            else if (average < 95)
-                standing = STANDING.MagnaCumLaude;
-            else
-                standing = STANDING.MagnaCumLaude;
-
-            switch (standing)
-            {
-                case STANDING.Remedial:
-                    return new Tuple<bool, STANDING>(false, standing);
-                case STANDING.Average:
-                    return new Tuple<bool, STANDING>(true, standing);
-                case STANDING.SumaCumLaude:
-                    return new Tuple<bool, STANDING>(true, standing);
-                case STANDING.MagnaCumLaude:
-                    return new Tuple<bool, STANDING>(true, standing);
-
-                default:
-                    return new Tuple<bool, STANDING>(false, standing);
-            } 
+            return new Tuple<bool, Standing>(true, Standing.Average);
+        }
+        //
+        private [] getAllCourseRequirements () {
+            
         }
     }
+
 }

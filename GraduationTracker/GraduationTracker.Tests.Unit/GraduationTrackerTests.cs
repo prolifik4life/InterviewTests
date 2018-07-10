@@ -11,9 +11,7 @@ namespace GraduationTracker.Tests.Unit
         [TestMethod]
         public void TestHasCredits()
         {
-            var tracker = new GraduationTracker();
-            //const mockDataFactory = new MockDataFactory()
-                
+            var tracker = new GraduationTracker();                
 
             var diploma = new Diploma
             {
@@ -73,19 +71,25 @@ namespace GraduationTracker.Tests.Unit
             //tracker.HasGraduated()
         };
             
-            var graduated = new List<Tuple<bool, STANDING>>();
+            var graduated = new List<Tuple<bool, Standing>>();
 
             foreach(var student in students)
             {
                 graduated.Add(tracker.HasGraduated(diploma, student));      
             }
 
-            //properly written unit tests become the defacto documentation for a class
+            //"properly written unit tests become the defacto documentation for a class" : interpret the requirements of the code,
+            //write test cases to meet these and test edge cases, then clean up code while making sure it continues to pass your tests
+            //one test per classes, classes each have sing 
+
+            //some good reading:
+            //https://www.red-gate.com/simple-talk/dotnet/net-framework/on-writing-unit-tests-for-c/
+
 
             //original test case only checks if there are any items in the graduated list, which there will be by default as long
             //as there are any students in the test data (regardless of their graduation status). 
             //unclear what's being tested. Test name "TestHasCredits" doesn't relate in an obvious way to this test. 
-            Assert.IsFalse(graduated.Any());
+            //Assert.IsFalse(graduated.Any());
 
         }
     }
