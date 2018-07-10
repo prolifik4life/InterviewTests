@@ -43,17 +43,18 @@ namespace GraduationTracker
         {
             int[] requirements = diploma.Requirements;
 
-            foreach(int requirement in requirements){
-                int requirement = requirements[i]
+            foreach(int requirementId in requirements){
+				Requirement requirement = GraduationTrackerRepository.GetRequirement(requirementId);
 
-            }
+
+			}
 
             return new Tuple<bool, Standing>(true, Standing.Average);
         }
         //
-        private [] getRequirementCourses () {
+        //private [] getRequirementCourses () {
             
-        }
+        //}
     }
 
 }
