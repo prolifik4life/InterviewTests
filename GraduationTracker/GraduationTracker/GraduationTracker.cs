@@ -41,19 +41,17 @@ namespace GraduationTracker
     // and their standing based on their grade average
         public Tuple<bool, Standing>  HasGraduated(Diploma diploma, Student student)
         {
-            //get requirements from diploma input
             int[] requirements = diploma.Requirements;
-            getAllCourseRequirements
+
             foreach(int requirement in requirements){
-                int reqCourse = 
-                foreach (int reqCourse in requirements){
-                    
-                }
+                int requirement = requirements[i]
+
             }
+
             return new Tuple<bool, Standing>(true, Standing.Average);
         }
         //
-        private [] getAllCourseRequirements () {
+        private [] getRequirementCourses () {
             
         }
     }
