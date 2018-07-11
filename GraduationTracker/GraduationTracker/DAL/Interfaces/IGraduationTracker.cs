@@ -10,6 +10,6 @@ namespace GraduationTracker.DAL.Interfaces
 	{
 		Student GetStudent(int id);
 		Diploma GetDiploma(int id);
-		Requirement GetRequirement(int id)
+		Requirement GetRequirement(int id);
 	}
 }

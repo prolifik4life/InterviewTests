@@ -3,58 +3,86 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GraduationTracker.DAL.Interfaces;
 
 namespace GraduationTracker
 {
-    public partial class GraduationTracker
+	public partial class GraduationTracker
 
-    //General Requirements: 
-    // For a given student and diploma, need to determine whether they've graduated (met the requirements of the diploma)
-    // and calculate their standing based on their grade average
+	{
+		//TODO: would rather inject repository choice, or put it in config 
+		public IGraduationTracker repository = new GraduationTrackerRepository();
 
-    //Steps:
-    //Get list of diploma requirements
-    //For each requirement, get list of courses (remember that although the examples only show one, there could be several)
-    //For each requirement course in requirement, check if student has completed the course   
-    //If they have the required course, then 
-        //once applied to that requirement, it can not be used to fill another requirement) --> try to find a way to give unneeded credits 
-        //add the mark to the mark sum to calculate their average
-        //if their grade in the course was sufficient to pass, 
-            //add the credit to the list of credits for the given requirement
-    // After going through requirement, check if student credits for requirement is greater than or equal to requirement credits
-    //If so, we'll need to track that they passed the requirement? Or failed it.
-    // After going through requirements, calculate average, and use average to calculate standing. 
-    // Check if standing is sufficient to graduate, as well as checking if all requirements have been met.
+		// For a given student and diploma, determines whether they've graduated (met the requirements of the diploma)
+		// and their standing based on their grade average
+		public Tuple<bool, Standing> HasGraduated(Diploma diploma, Student student)
+		{
+			IGraduationTracker repository = new GraduationTrackerRepository();
+			List<Course> studentUnusedCourses = student.Courses;//courses not yet used for to fulfill a credit requirement
+			List<Course> completedRequirementCourses = new List<Course>();
+			List<int> completedRequirementIds = new List<int>();
 
-//* There is a missing check
-//* A studentmust fulfill all requirements(i.e.they must have a course(s)
-//that has enough credits to fill a given requirement, and once applied to that requirement, it can not be used to fill another requirement)
-//* There can be multiple courses per requirement.
-//* A requirement is considered complete when any number of courses it
-//contains have been completed so that the total number of course credits is greater than or equal to the number of requirement credits.
-//* No the student does not need to have received the minimum mark in all
-//courses a requirement contains.Only in enough courses to have a number of credits equal to or greater than the number of credits in the requirement.
+			foreach (int requirementId in diploma.Requirements)
+			{
+				int completedCreditsCount = 0;
+				Requirement requirement = repository.GetRequirement(requirementId);
+				foreach (int courseId in requirement.Courses)
+				{
+					Course completedRequirementCourse = GetStudentRequiredCourse(courseId, ref studentUnusedCourses);
+					if (completedRequirementCourse != null && completedRequirementCourse.Mark >= requirement.MinimumMark)
+					{
+						//TODO: should these be globally available, to make it easier to separate this logic out? Can this logic be separated out into one thing, or is doing a few things?
+						studentUnusedCourses.Remove(completedRequirementCourse);//cannot be reused for later requirements
+						completedRequirementCourses.Add(completedRequirementCourse);
+						completedCreditsCount += 1;
+					}
+				}
+				if (completedCreditsCount >= requirement.Credits)
+				{
+					completedRequirementIds.Add(requirementId);
+				}
+			}
+			diploma.Requirements.Sort();
+			completedRequirementIds.Sort();
+			Boolean metRequirements = diploma.Requirements == completedRequirementIds;
 
+			Standing standing = GetStandingFromAverage(completedRequirementCourses);//TODO: test edge cases... no data, letters, negative, zero
 
-    {   
-    // For a given student and diploma, determines whether they've graduated (met the requirements of the diploma)
-    // and their standing based on their grade average
-        public Tuple<bool, Standing>  HasGraduated(Diploma diploma, Student student)
-        {
-            int[] requirements = diploma.Requirements;
+			Boolean isGraduated = (metRequirements && standing != Standing.Remedial && standing != Standing.None);
 
-            foreach(int requirementId in requirements){
-				Requirement requirement = GraduationTrackerRepository.GetRequirement(requirementId);
+			return new Tuple<bool, Standing>(isGraduated, standing);
+		}
 
+		private Course GetStudentRequiredCourse(int courseId, ref List<Course> studentUnusedCourses)
+		{
+			return studentUnusedCourses.Find(x => x.Id == courseId);
+		}
 
+		private Standing GetStandingFromAverage(List<Course> completedRequirementCourses)
+		{
+			Standing standing;
+			double average = Math.Round(completedRequirementCourses.Average(course => course.Mark));
+			switch (average)
+			{
+				case var exp when (average < 50):
+					standing = Standing.Remedial;//TODO: would these thresholds be better stored in the data source?
+					break;
+				case var exp when (average < 80):
+					standing = Standing.Average;
+					break;
+				case var exp when (average < 95):
+					standing = Standing.MagnaCumLaude;
+					break;
+				case var exp when (average >= 95 && average <=100):
+					standing = Standing.SummaCumLaude;
+					break;
+				default:
+					standing = Standing.None;
+					break;
 			}
 
-            return new Tuple<bool, Standing>(true, Standing.Average);
-        }
-        //
-        //private [] getRequirementCourses () {
-            
-        //}
-    }
+			return standing;
+		}
+	}
 
 }
