@@ -2,95 +2,288 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
+using GraduationTracker.DAL.Interfaces;
 
 namespace GraduationTracker.Tests.Unit
 {
 	[TestClass]
 	public class GraduationTrackerTests
 	{
+		private IGraduationTracker mock_repository = new MockRepository();
+
+		//Standings calculated as expected: 
+		//all standing types calculated as expected with homogeneous marks
+		//standing type calculated correctly with varying marks (inc 0, 100) - average comes to decimal
+		//standing type calculated all 0s
+		//standing type invalid over 100
+		//standing type invalid under 0
+		//student has high grades in non-requirement courses but remedial grades in required courses
+
 		[TestMethod]
-		public void TestHasCredits()
+		public void WhenStudentIsRemedial_StandingIsRemedial()
 		{
-			GraduationTracker tracker = new GraduationTracker();
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.remedial;
+			Student student = mock_repository.GetStudent(testStudentId);
+			Diploma diploma = mock_repository.GetDiploma(1);
 
-			//var diploma = new Diploma
-			//{
-			//	Id = 1,
-			//	Credits = 4,
-			//	Requirements = new int[] { 100, 102, 103, 104 }
-			//};
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+			Assert.AreEqual(Standing.Remedial, graduationStatus.Standing);
+		}
 
-			//var students = new[]
-			//{
-			//   new Student
-			//   {
-			//	   Id = 1,
-			//	   Courses = new List<Course>
-			//	   {
-			//			new Course{Id = 1, Name = "Math", Mark=95 },
-			//			new Course{Id = 2, Name = "Science", Mark=95 },
-			//			new Course{Id = 3, Name = "Literature", Mark=95 },
-			//			new Course{Id = 4, Name = "Physical Education", Mark=95 }
-			//	   }
-			//   },
-			//   new Student
-			//   {
-			//	   Id = 2,
-			//	   Courses = new List<Course>
-			//	   {
-			//			new Course{Id = 1, Name = "Math", Mark=80 },
-			//			new Course{Id = 2, Name = "Science", Mark=80 },
-			//			new Course{Id = 3, Name = "Literature", Mark=80 },
-			//			new Course{Id = 4, Name = "Physical Education", Mark=80 }
-			//	   }
-			//   },
-			//new Student
-			//{
-			//	Id = 3,
-			//	Courses = new List<Course>
-			//	{
-			//		new Course{Id = 1, Name = "Math", Mark=50 },
-			//		new Course{Id = 2, Name = "Science", Mark=50 },
-			//		new Course{Id = 3, Name = "Literature", Mark=50 },
-			//		new Course{Id = 4, Name = "Physical Education", Mark=50 }
-			//	}
-			//},
-			//new Student
-			//{
-			//	Id = 4,
-			//	Courses = new List<Course>
-			//	{
-			//		new Course{Id = 1, Name = "Math", Mark=40 },
-			//		new Course{Id = 2, Name = "Science", Mark=40 },
-			//		new Course{Id = 3, Name = "Literature", Mark=40 },
-			//		new Course{Id = 4, Name = "Physical Education", Mark=40 }
-			//	}
-			//}
+		[TestMethod]
+		public void WhenStudentIsAverage_StandingIsAverage()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.average;
+			Student student = mock_repository.GetStudent(testStudentId);
+			Diploma diploma = mock_repository.GetDiploma(1);
 
-			//tracker.HasGraduated()
-		};
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+			Assert.AreEqual(Standing.Average, graduationStatus.Standing);
+		}
 
-			var graduated = new List<Tuple<bool, Standing>>();
+		[TestMethod]
+		public void WhenStudentIsMagnaCumLaude_StandingIsMagnaCumLaude()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.magnaCumLaude;
+			Student student = mock_repository.GetStudent(testStudentId);
+			Diploma diploma = mock_repository.GetDiploma(1);
 
-			foreach (var student in students)
-			{
-				graduated.Add(tracker.HasGraduated(diploma, student));
-			}
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+			Assert.AreEqual(Standing.MagnaCumLaude, graduationStatus.Standing);
+		}
 
-			//"properly written unit tests become the defacto documentation for a class" : interpret the requirements of the code,
-			//write test cases to meet these and test edge cases, then clean up code while making sure it continues to pass your tests
-			//one test per classes, classes each have sing 
+		[TestMethod]
+		public void WhenStudentIsSummaCumLaudee_StandingIsSummaCumLaude()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.summaCumLaude;
+			Student student = mock_repository.GetStudent(testStudentId);
+			Diploma diploma = mock_repository.GetDiploma(1);
 
-			//some good reading:
-			//https://www.red-gate.com/simple-talk/dotnet/net-framework/on-writing-unit-tests-for-c/
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+			Assert.AreEqual(Standing.SummaCumLaude, graduationStatus.Standing);
+		}
+
+		[TestMethod]
+		public void WhenStudentHasVaryingGrades_StandingIsAverage()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.varyingGrades;
+			Student student = mock_repository.GetStudent(testStudentId);
+			Diploma diploma = mock_repository.GetDiploma(1);
+
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+			Assert.AreEqual(Standing.Average, graduationStatus.Standing);
+		}
 
 
-			//original test case only checks if there are any items in the graduated list, which there will be by default as long
-			//as there are any students in the test data (regardless of their graduation status). 
-			//unclear what's being tested. Test name "TestHasCredits" doesn't relate in an obvious way to this test. 
-			//Assert.IsFalse(graduated.Any());
+		[TestMethod]
+		public void WhenStudentHasAllZeros_StandingIsRemedial()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.allZeroGrades;
+			Student student = mock_repository.GetStudent(testStudentId);
+			Diploma diploma = mock_repository.GetDiploma(1);
+
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+			Assert.AreEqual(Standing.Remedial, graduationStatus.Standing);
+		}
+
+		[TestMethod]
+		public void WhenStudentAverageOver100_StandingIsNone()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.over100;
+			Student student = mock_repository.GetStudent(testStudentId);
+			Diploma diploma = mock_repository.GetDiploma(1);
+
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+			Assert.AreEqual(Standing.None, graduationStatus.Standing);
+		}
+
+		[TestMethod]
+		public void WhenStudentAverageUnderZero_StandingIsNone()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.averageUnderZero;
+			Student student = mock_repository.GetStudent(testStudentId);
+			Diploma diploma = mock_repository.GetDiploma(1);
+
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+			Assert.AreEqual(Standing.None, graduationStatus.Standing);
+		}
+
+		[TestMethod]
+		public void WhenStudentIsRemedialOnlyInRequiredCourses_StandingIsRemedial()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.remedialInRequirementCoursesOnly;
+			Student student = mock_repository.GetStudent(testStudentId);
+			Diploma diploma = mock_repository.GetDiploma(1);
+
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+			Assert.AreEqual(Standing.Remedial, graduationStatus.Standing);
+		}
+
+		//Successful graduation scenarios:
+		//passing standings
+		//all met requirements
+
+		[TestMethod]
+		public void WhenStudentIsAverage_HasGraduatedIsTrue()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.average;
+			Student student = mock_repository.GetStudent(testStudentId);
+			Diploma diploma = mock_repository.GetDiploma(1);
+
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+			Assert.IsTrue(graduationStatus.HasGraduated);
+		}
+
+		[TestMethod]
+		public void WhenStudentIsMagnaCumLaude_HasGraduatedIsTrue()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.magnaCumLaude;
+			Student student = mock_repository.GetStudent(testStudentId);
+			Diploma diploma = mock_repository.GetDiploma(1);
+
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+			Assert.IsTrue(graduationStatus.HasGraduated);
+		}
+
+		[TestMethod]
+		public void WhenStudentIsSummaCumLaude_HasGraduatedIsTrue()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.summaCumLaude;
+			Student student = mock_repository.GetStudent(testStudentId);
+			Diploma diploma = mock_repository.GetDiploma(1);
+
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+			Assert.IsTrue(graduationStatus.HasGraduated);
+		}
+
+		[TestMethod]
+		public void WhenStudentHasEnoughCreditsToMeetRequirementButNotAll_HasGraduatedIsTrue()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.enoughCreditsToMeetRequirementButNotAll;
+			Student student = mock_repository.GetStudent(testStudentId);
+			Diploma diploma = mock_repository.GetDiploma(3);
+
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+			Assert.IsTrue(graduationStatus.HasGraduated);
+		}
+
+		//Failing graduation scenarios: 
+		//student with remedial standing
+		//student with a high average failing one requirement
+		//student with high grades in non-requirements but remedial in required
+		//student missing required courses does not graduate
+		//student with one course less than requirement credit does not graduate
+		//student with repeated passing requirement course does not graduate
+		//student who would need to re-use credit to meet a requirment does not graduate
+		[TestMethod]
+		public void WhenStudentIsRemedial_HasGraduatedIsFalse()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.remedial;
+			Student student = mock_repository.GetStudent(testStudentId);
+			Diploma diploma = mock_repository.GetDiploma(1);
+
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+			Assert.IsFalse(graduationStatus.HasGraduated);
+		}
+
+		[TestMethod]
+		public void WhenStudentHasHighGradesFailingOneRequirement_HasGraduatedIsFalse()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.highAverageFailsRequirement;
+			Student student = mock_repository.GetStudent(testStudentId);
+			Diploma diploma = mock_repository.GetDiploma(1);
+
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+			Assert.IsFalse(graduationStatus.HasGraduated);
+		}
+
+		[TestMethod]
+		public void WhenStudentHasLowGradesInRequirementCoursesOnly_HasGraduatedIsFalse()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.remedialInRequirementCoursesOnly;
+			Student student = mock_repository.GetStudent(testStudentId);
+			Diploma diploma = mock_repository.GetDiploma(1);
+
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+			Assert.IsFalse(graduationStatus.HasGraduated);
+		}
+
+		[TestMethod]
+		public void WhenStudentIsMissingRequirementCourses_HasGraduatedIsFalse()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.missingCourses;
+			Student student = mock_repository.GetStudent(testStudentId);
+			Diploma diploma = mock_repository.GetDiploma(1);
+
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+			Assert.IsFalse(graduationStatus.HasGraduated);
+		}
+
+		[TestMethod]
+		public void WhenStudentFailingOneRequirementCredit_HasGraduatedIsFalse()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.failingOneRequirementCredit;
+			Student student = mock_repository.GetStudent(testStudentId);
+			Diploma diploma = mock_repository.GetDiploma(2);
+
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+			Assert.IsFalse(graduationStatus.HasGraduated);
+		}
 
 
+		[TestMethod]
+		public void WhenStudentCantReuseRequirementCreditToMeetAnotherRequirement_HasGraduatedIsFalse()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.wouldNeedToReuseARequirementCredit;
+			Student student = mock_repository.GetStudent(testStudentId);
+			Diploma diploma = mock_repository.GetDiploma(4);
+
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+			Assert.IsFalse(graduationStatus.HasGraduated);
+		}
+
+		[TestMethod]
+		public void WhenStudentMissingOneRequirementCredit_HasGraduatedIsFalse()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.missingOneRequirementCredit;
+			Student student = mock_repository.GetStudent(testStudentId);
+			Diploma diploma = mock_repository.GetDiploma(2);
+
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+			Assert.IsFalse(graduationStatus.HasGraduated);
+		}
+
+		[TestMethod]
+		public void WhenStudentRepeatedRequirementCourse_HasGraduatedIsFalse()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.repeatedCourse;
+			Student student = mock_repository.GetStudent(testStudentId);
+			Diploma diploma = mock_repository.GetDiploma(2);
+
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+			Assert.IsFalse(graduationStatus.HasGraduated);
 		}
 	}
+
 }

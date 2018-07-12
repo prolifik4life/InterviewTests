@@ -83,7 +83,7 @@ namespace GraduationTracker
 				{
 					Id = 1,
 					Credits = 4,
-					Requirements = new int[]{100,102,103,104}
+					Requirements = new List<int>{100,102,103,104}
 				}
 			};
 		}
