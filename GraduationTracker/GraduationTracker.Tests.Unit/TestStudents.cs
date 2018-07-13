@@ -10,10 +10,10 @@ namespace GraduationTracker.Tests.Unit
 	{
 		public enum TestStudentIds
 		{
-			remedial = 4,
-			average = 3,
-			magnaCumLaude = 2,
 			summaCumLaude = 1,
+			magnaCumLaude = 2,
+			average = 3,
+			remedial = 4,
 			noCourses = 5,
 			missingCourses = 6,
 			over100 = 7,

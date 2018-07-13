@@ -8,8 +8,6 @@ using GraduationTracker.DAL.Interfaces;
 namespace GraduationTracker
 {
 	public partial class GraduationTracker
-
-
 	{
 		private readonly IGraduationTracker repository;
 
@@ -24,6 +22,7 @@ namespace GraduationTracker
 		{
 			List<Course> completedRequirementCourses = new List<Course>();
 			List<int> completedRequirementIds = new List<int>();
+			GraduationStatus result = null;
 
 			foreach (int requirementId in diploma.Requirements)
 			{
@@ -32,13 +31,23 @@ namespace GraduationTracker
 				foreach (int courseId in requirement.Courses)
 				{
 					Course completedRequirementCourse = GetStudentRequiredCourse(courseId, student.Courses);
-					if (completedRequirementCourse != null &&
-						completedRequirementCourse.Mark >= requirement.MinimumMark &&
-						completedRequirementCourses.Contains(completedRequirementCourse) == false
-						)
+
+					if (completedRequirementCourse != null)
 					{
+						if (completedRequirementCourse.Mark < 0 || completedRequirementCourse.Mark > 100)
+						{
+							throw new System.ArgumentOutOfRangeException("student", "Student course mark not between 0 to 100");
+						}
+
+						if (
+							completedRequirementCourse.Mark >= requirement.MinimumMark &&
+							completedRequirementCourses.Contains(completedRequirementCourse) == false
+							)
+						{
+							completedCreditsCount += 1;
+						}
+						//completed whether got credit or not, will be added to average
 						completedRequirementCourses.Add(completedRequirementCourse);
-						completedCreditsCount += 1;
 					}
 				}
 				if (completedCreditsCount >= requirement.Credits)
@@ -50,10 +59,13 @@ namespace GraduationTracker
 			completedRequirementIds.Sort();
 			Boolean metRequirements = completedRequirementIds.SequenceEqual(diploma.Requirements);
 
-			Standing standing = GetStandingFromAverage(completedRequirementCourses);//TODO: test edge cases... no data, letters, negative, zero
+			Standing standing = GetStandingFromAverage(completedRequirementCourses);
 
 			Boolean hasGraduated = (metRequirements && standing != Standing.Remedial && standing != Standing.None);
-			return new GraduationStatus { HasGraduated = hasGraduated, Standing = standing };
+			result = new GraduationStatus { HasGraduated = hasGraduated, Standing = standing };
+
+
+			return result;
 		}
 
 		private Course GetStudentRequiredCourse(int courseId, List<Course> studentCourses)
@@ -69,8 +81,9 @@ namespace GraduationTracker
 
 			switch (average)
 			{
+				//would these thresholds be better stored in datasource?
 				case var exp when (average >= 0 && average < 50):
-					standing = Standing.Remedial;//TODO: would these thresholds be better stored in the data source?
+					standing = Standing.Remedial;
 					break;
 				case var exp when (average < 80):
 					standing = Standing.Average;

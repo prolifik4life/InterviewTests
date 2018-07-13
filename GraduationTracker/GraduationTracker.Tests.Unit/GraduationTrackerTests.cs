@@ -25,7 +25,8 @@ namespace GraduationTracker.Tests.Unit
 			GraduationTracker tracker = new GraduationTracker(mock_repository);
 			int testStudentId = (int)TestStudents.TestStudentIds.remedial;
 			Student student = mock_repository.GetStudent(testStudentId);
-			Diploma diploma = mock_repository.GetDiploma(1);
+			int testDiplomaId = (int)TestDiplomas.TestDiplomaIds.singleCourseRequirements;
+			Diploma diploma = mock_repository.GetDiploma(testDiplomaId);
 
 			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
 			Assert.AreEqual(Standing.Remedial, graduationStatus.Standing);
@@ -37,7 +38,8 @@ namespace GraduationTracker.Tests.Unit
 			GraduationTracker tracker = new GraduationTracker(mock_repository);
 			int testStudentId = (int)TestStudents.TestStudentIds.average;
 			Student student = mock_repository.GetStudent(testStudentId);
-			Diploma diploma = mock_repository.GetDiploma(1);
+			int testDiplomaId = (int)TestDiplomas.TestDiplomaIds.singleCourseRequirements;
+			Diploma diploma = mock_repository.GetDiploma(testDiplomaId);
 
 			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
 			Assert.AreEqual(Standing.Average, graduationStatus.Standing);
@@ -49,7 +51,8 @@ namespace GraduationTracker.Tests.Unit
 			GraduationTracker tracker = new GraduationTracker(mock_repository);
 			int testStudentId = (int)TestStudents.TestStudentIds.magnaCumLaude;
 			Student student = mock_repository.GetStudent(testStudentId);
-			Diploma diploma = mock_repository.GetDiploma(1);
+			int testDiplomaId = (int)TestDiplomas.TestDiplomaIds.singleCourseRequirements;
+			Diploma diploma = mock_repository.GetDiploma(testDiplomaId);
 
 			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
 			Assert.AreEqual(Standing.MagnaCumLaude, graduationStatus.Standing);
@@ -61,7 +64,8 @@ namespace GraduationTracker.Tests.Unit
 			GraduationTracker tracker = new GraduationTracker(mock_repository);
 			int testStudentId = (int)TestStudents.TestStudentIds.summaCumLaude;
 			Student student = mock_repository.GetStudent(testStudentId);
-			Diploma diploma = mock_repository.GetDiploma(1);
+			int testDiplomaId = (int)TestDiplomas.TestDiplomaIds.singleCourseRequirements;
+			Diploma diploma = mock_repository.GetDiploma(testDiplomaId);
 
 			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
 			Assert.AreEqual(Standing.SummaCumLaude, graduationStatus.Standing);
@@ -73,7 +77,8 @@ namespace GraduationTracker.Tests.Unit
 			GraduationTracker tracker = new GraduationTracker(mock_repository);
 			int testStudentId = (int)TestStudents.TestStudentIds.varyingGrades;
 			Student student = mock_repository.GetStudent(testStudentId);
-			Diploma diploma = mock_repository.GetDiploma(1);
+			int testDiplomaId = (int)TestDiplomas.TestDiplomaIds.singleCourseRequirements;
+			Diploma diploma = mock_repository.GetDiploma(testDiplomaId);
 
 			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
 			Assert.AreEqual(Standing.Average, graduationStatus.Standing);
@@ -86,35 +91,14 @@ namespace GraduationTracker.Tests.Unit
 			GraduationTracker tracker = new GraduationTracker(mock_repository);
 			int testStudentId = (int)TestStudents.TestStudentIds.allZeroGrades;
 			Student student = mock_repository.GetStudent(testStudentId);
-			Diploma diploma = mock_repository.GetDiploma(1);
+			int testDiplomaId = (int)TestDiplomas.TestDiplomaIds.singleCourseRequirements;
+			Diploma diploma = mock_repository.GetDiploma(testDiplomaId);
 
 			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
 			Assert.AreEqual(Standing.Remedial, graduationStatus.Standing);
 		}
 
-		[TestMethod]
-		public void WhenStudentAverageOver100_StandingIsNone()
-		{
-			GraduationTracker tracker = new GraduationTracker(mock_repository);
-			int testStudentId = (int)TestStudents.TestStudentIds.over100;
-			Student student = mock_repository.GetStudent(testStudentId);
-			Diploma diploma = mock_repository.GetDiploma(1);
 
-			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
-			Assert.AreEqual(Standing.None, graduationStatus.Standing);
-		}
-
-		[TestMethod]
-		public void WhenStudentAverageUnderZero_StandingIsNone()
-		{
-			GraduationTracker tracker = new GraduationTracker(mock_repository);
-			int testStudentId = (int)TestStudents.TestStudentIds.averageUnderZero;
-			Student student = mock_repository.GetStudent(testStudentId);
-			Diploma diploma = mock_repository.GetDiploma(1);
-
-			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
-			Assert.AreEqual(Standing.None, graduationStatus.Standing);
-		}
 
 		[TestMethod]
 		public void WhenStudentIsRemedialOnlyInRequiredCourses_StandingIsRemedial()
@@ -122,7 +106,8 @@ namespace GraduationTracker.Tests.Unit
 			GraduationTracker tracker = new GraduationTracker(mock_repository);
 			int testStudentId = (int)TestStudents.TestStudentIds.remedialInRequirementCoursesOnly;
 			Student student = mock_repository.GetStudent(testStudentId);
-			Diploma diploma = mock_repository.GetDiploma(1);
+			int testDiplomaId = (int)TestDiplomas.TestDiplomaIds.singleCourseRequirements;
+			Diploma diploma = mock_repository.GetDiploma(testDiplomaId);
 
 			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
 			Assert.AreEqual(Standing.Remedial, graduationStatus.Standing);
@@ -138,7 +123,8 @@ namespace GraduationTracker.Tests.Unit
 			GraduationTracker tracker = new GraduationTracker(mock_repository);
 			int testStudentId = (int)TestStudents.TestStudentIds.average;
 			Student student = mock_repository.GetStudent(testStudentId);
-			Diploma diploma = mock_repository.GetDiploma(1);
+			int testDiplomaId = (int)TestDiplomas.TestDiplomaIds.singleCourseRequirements;
+			Diploma diploma = mock_repository.GetDiploma(testDiplomaId);
 
 			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
 			Assert.IsTrue(graduationStatus.HasGraduated);
@@ -150,7 +136,8 @@ namespace GraduationTracker.Tests.Unit
 			GraduationTracker tracker = new GraduationTracker(mock_repository);
 			int testStudentId = (int)TestStudents.TestStudentIds.magnaCumLaude;
 			Student student = mock_repository.GetStudent(testStudentId);
-			Diploma diploma = mock_repository.GetDiploma(1);
+			int testDiplomaId = (int)TestDiplomas.TestDiplomaIds.singleCourseRequirements;
+			Diploma diploma = mock_repository.GetDiploma(testDiplomaId);
 
 			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
 			Assert.IsTrue(graduationStatus.HasGraduated);
@@ -162,7 +149,8 @@ namespace GraduationTracker.Tests.Unit
 			GraduationTracker tracker = new GraduationTracker(mock_repository);
 			int testStudentId = (int)TestStudents.TestStudentIds.summaCumLaude;
 			Student student = mock_repository.GetStudent(testStudentId);
-			Diploma diploma = mock_repository.GetDiploma(1);
+			int testDiplomaId = (int)TestDiplomas.TestDiplomaIds.singleCourseRequirements;
+			Diploma diploma = mock_repository.GetDiploma(testDiplomaId);
 
 			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
 			Assert.IsTrue(graduationStatus.HasGraduated);
@@ -174,7 +162,8 @@ namespace GraduationTracker.Tests.Unit
 			GraduationTracker tracker = new GraduationTracker(mock_repository);
 			int testStudentId = (int)TestStudents.TestStudentIds.enoughCreditsToMeetRequirementButNotAll;
 			Student student = mock_repository.GetStudent(testStudentId);
-			Diploma diploma = mock_repository.GetDiploma(3);
+			int testDiplomaId = (int)TestDiplomas.TestDiplomaIds.hasThreeCreditRequirementNeedTwo;
+			Diploma diploma = mock_repository.GetDiploma(testDiplomaId);
 
 			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
 			Assert.IsTrue(graduationStatus.HasGraduated);
@@ -194,7 +183,8 @@ namespace GraduationTracker.Tests.Unit
 			GraduationTracker tracker = new GraduationTracker(mock_repository);
 			int testStudentId = (int)TestStudents.TestStudentIds.remedial;
 			Student student = mock_repository.GetStudent(testStudentId);
-			Diploma diploma = mock_repository.GetDiploma(1);
+			int testDiplomaId = (int)TestDiplomas.TestDiplomaIds.singleCourseRequirements;
+			Diploma diploma = mock_repository.GetDiploma(testDiplomaId);
 
 			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
 			Assert.IsFalse(graduationStatus.HasGraduated);
@@ -206,7 +196,8 @@ namespace GraduationTracker.Tests.Unit
 			GraduationTracker tracker = new GraduationTracker(mock_repository);
 			int testStudentId = (int)TestStudents.TestStudentIds.highAverageFailsRequirement;
 			Student student = mock_repository.GetStudent(testStudentId);
-			Diploma diploma = mock_repository.GetDiploma(1);
+			int testDiplomaId = (int)TestDiplomas.TestDiplomaIds.singleCourseRequirements;
+			Diploma diploma = mock_repository.GetDiploma(testDiplomaId);
 
 			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
 			Assert.IsFalse(graduationStatus.HasGraduated);
@@ -218,7 +209,8 @@ namespace GraduationTracker.Tests.Unit
 			GraduationTracker tracker = new GraduationTracker(mock_repository);
 			int testStudentId = (int)TestStudents.TestStudentIds.remedialInRequirementCoursesOnly;
 			Student student = mock_repository.GetStudent(testStudentId);
-			Diploma diploma = mock_repository.GetDiploma(1);
+			int testDiplomaId = (int)TestDiplomas.TestDiplomaIds.singleCourseRequirements;
+			Diploma diploma = mock_repository.GetDiploma(testDiplomaId);
 
 			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
 			Assert.IsFalse(graduationStatus.HasGraduated);
@@ -230,7 +222,8 @@ namespace GraduationTracker.Tests.Unit
 			GraduationTracker tracker = new GraduationTracker(mock_repository);
 			int testStudentId = (int)TestStudents.TestStudentIds.missingCourses;
 			Student student = mock_repository.GetStudent(testStudentId);
-			Diploma diploma = mock_repository.GetDiploma(1);
+			int testDiplomaId = (int)TestDiplomas.TestDiplomaIds.singleCourseRequirements;
+			Diploma diploma = mock_repository.GetDiploma(testDiplomaId);
 
 			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
 			Assert.IsFalse(graduationStatus.HasGraduated);
@@ -242,7 +235,8 @@ namespace GraduationTracker.Tests.Unit
 			GraduationTracker tracker = new GraduationTracker(mock_repository);
 			int testStudentId = (int)TestStudents.TestStudentIds.failingOneRequirementCredit;
 			Student student = mock_repository.GetStudent(testStudentId);
-			Diploma diploma = mock_repository.GetDiploma(2);
+			int testDiplomaId = (int)TestDiplomas.TestDiplomaIds.hasTwoCreditRequirementNeedBoth;
+			Diploma diploma = mock_repository.GetDiploma(testDiplomaId);
 
 			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
 			Assert.IsFalse(graduationStatus.HasGraduated);
@@ -255,7 +249,8 @@ namespace GraduationTracker.Tests.Unit
 			GraduationTracker tracker = new GraduationTracker(mock_repository);
 			int testStudentId = (int)TestStudents.TestStudentIds.wouldNeedToReuseARequirementCredit;
 			Student student = mock_repository.GetStudent(testStudentId);
-			Diploma diploma = mock_repository.GetDiploma(4);
+			int testDiplomaId = (int)TestDiplomas.TestDiplomaIds.requiresRepeatCourseCredit;
+			Diploma diploma = mock_repository.GetDiploma(testDiplomaId);
 
 			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
 			Assert.IsFalse(graduationStatus.HasGraduated);
@@ -267,7 +262,8 @@ namespace GraduationTracker.Tests.Unit
 			GraduationTracker tracker = new GraduationTracker(mock_repository);
 			int testStudentId = (int)TestStudents.TestStudentIds.missingOneRequirementCredit;
 			Student student = mock_repository.GetStudent(testStudentId);
-			Diploma diploma = mock_repository.GetDiploma(2);
+			int testDiplomaId = (int)TestDiplomas.TestDiplomaIds.hasTwoCreditRequirementNeedBoth;
+			Diploma diploma = mock_repository.GetDiploma(testDiplomaId);
 
 			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
 			Assert.IsFalse(graduationStatus.HasGraduated);
@@ -279,10 +275,38 @@ namespace GraduationTracker.Tests.Unit
 			GraduationTracker tracker = new GraduationTracker(mock_repository);
 			int testStudentId = (int)TestStudents.TestStudentIds.repeatedCourse;
 			Student student = mock_repository.GetStudent(testStudentId);
-			Diploma diploma = mock_repository.GetDiploma(2);
+			int testDiplomaId = (int)TestDiplomas.TestDiplomaIds.hasTwoCreditRequirementNeedBoth;
+			Diploma diploma = mock_repository.GetDiploma(testDiplomaId);
 
 			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
 			Assert.IsFalse(graduationStatus.HasGraduated);
+		}
+
+		//exceptions
+		[TestMethod]
+		[ExpectedException(typeof(ArgumentOutOfRangeException))]
+		public void WhenStudentAverageOver100_StandingIsNone()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.over100;
+			Student student = mock_repository.GetStudent(testStudentId);
+			int testDiplomaId = (int)TestDiplomas.TestDiplomaIds.singleCourseRequirements;
+			Diploma diploma = mock_repository.GetDiploma(testDiplomaId);
+
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
+		}
+
+		[TestMethod]
+		[ExpectedException(typeof(ArgumentOutOfRangeException))]
+		public void WhenStudentAverageUnderZero_StandingIsNone()
+		{
+			GraduationTracker tracker = new GraduationTracker(mock_repository);
+			int testStudentId = (int)TestStudents.TestStudentIds.averageUnderZero;
+			Student student = mock_repository.GetStudent(testStudentId);
+			int testDiplomaId = (int)TestDiplomas.TestDiplomaIds.singleCourseRequirements;
+			Diploma diploma = mock_repository.GetDiploma(testDiplomaId);
+
+			GraduationStatus graduationStatus = tracker.HasGraduated(diploma, student);
 		}
 	}
 
