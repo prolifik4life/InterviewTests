@@ -285,7 +285,7 @@ namespace GraduationTracker.Tests.Unit
 		//exceptions
 		[TestMethod]
 		[ExpectedException(typeof(ArgumentOutOfRangeException))]
-		public void WhenStudentAverageOver100_StandingIsNone()
+		public void WhenStudentAverageOver100_ExpectException()
 		{
 			GraduationTracker tracker = new GraduationTracker(mock_repository);
 			int testStudentId = (int)TestStudents.TestStudentIds.over100;
@@ -298,7 +298,7 @@ namespace GraduationTracker.Tests.Unit
 
 		[TestMethod]
 		[ExpectedException(typeof(ArgumentOutOfRangeException))]
-		public void WhenStudentAverageUnderZero_StandingIsNone()
+        public void WhenStudentAverageUnderZero_ExpectException()
 		{
 			GraduationTracker tracker = new GraduationTracker(mock_repository);
 			int testStudentId = (int)TestStudents.TestStudentIds.averageUnderZero;

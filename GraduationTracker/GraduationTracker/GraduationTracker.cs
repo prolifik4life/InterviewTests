@@ -9,8 +9,6 @@ namespace GraduationTracker
 {
     public class GraduationTracker
     {
-        private List<Course> coursesUsedToMeetRequirements;
-
         private readonly IGraduationTracker repository;
         public GraduationTracker(IGraduationTracker repository)
         {
@@ -21,47 +19,62 @@ namespace GraduationTracker
         // and their standing based on their grade average
         public GraduationStatus HasGraduated(Diploma diploma, Student student)
         {
-            coursesUsedToMeetRequirements = new List<Course>();
+            List<StudentRequirementCourse> studentRequirementCourses = GetStudentRequirementCourses(student.Courses, diploma.Requirements);
 
-            List<Boolean> requirementResults = diploma.Requirements.ConvertAll(requirement => StudentPassesRequirement(requirement, student.Courses));
-            Boolean hasMetDiplomaRequirements = requirementResults.All(result=>result==true);
+            Boolean hasMetDiplomaRequirements = diploma.Requirements.TrueForAll(requirementId => StudentPassesRequirement(requirementId, studentRequirementCourses));
 
-            Standing standing = GetStandingFromCourses(coursesUsedToMeetRequirements);
+            Standing standing = GetStandingFromCourses(studentRequirementCourses.Select(studentRequirementCourse => studentRequirementCourse.Course).ToList());
 
             Boolean hasGraduated = (hasMetDiplomaRequirements && standing != Standing.Remedial && standing != Standing.None);
             return new GraduationStatus { HasGraduated = hasGraduated, Standing = standing };
         }
 
-        //future improvement: coursesUsedToMeetRequirements gets mutated as a side effect of this function
-        //would prefer to avoid this if possible so that the function could be used outside of this class in future if needed.
-        private Boolean StudentPassesRequirement(int requirementId, List<Course> studentCourses)
+        //Get list of student courses matched to requirement courses. 
+        //Note that we're taking the first matching requirement... In a real app we'd want logic to determine
+        //which requirement to use the student course for. 
+        private List<StudentRequirementCourse> GetStudentRequirementCourses(List<Course> studentCourses, List<int> requirementIds)
         {
-            Requirement requirement = repository.GetRequirement(requirementId);
-            int requirementCreditsPassed = 0;
-            List<Course> coursesWorthCredits = new List<Course>();
-            List<Course> unusedStudentCourses = studentCourses.Except(coursesUsedToMeetRequirements).ToList();
-
-            //if there is a student course matching a requirement course, assign credit if its mark is sufficient
-            foreach (int requirementCourseId in requirement.Courses)
-            {
-                Course studentRequirementCourse = GetStudentRequiredCourse(requirementCourseId, unusedStudentCourses);
-                if (studentRequirementCourse != null && studentRequirementCourse.Mark >= requirement.MinimumMark)
-                {
-                    requirementCreditsPassed += 1;
-                    coursesWorthCredits.Add(studentRequirementCourse);
-                }
-            }
-            //only consider courses to be "used" if they were applied to a requirement that was passed.
-            if (requirementCreditsPassed >= requirement.Credits)
-            {
-                coursesUsedToMeetRequirements.AddRange(coursesWorthCredits);
-            }
-            return requirementCreditsPassed >= requirement.Credits;
+            List<StudentRequirementCourse> studentRequirementCourses = studentCourses.Select(studentCourse => MatchStudentCourseToRequirement(studentCourse, requirementIds))
+                                                                                 .Where(studentRequirementCourse => studentRequirementCourse != null).ToList();
+            return studentRequirementCourses;
         }
 
-        private Course GetStudentRequiredCourse(int courseId, List<Course> studentCourses)
+        private StudentRequirementCourse MatchStudentCourseToRequirement(Course studentCourse, List<int> requirementIds)
         {
-            return studentCourses.Find(x => x.Id == courseId);
+
+            foreach (int requirementId in requirementIds)
+            {
+                Requirement requirement = repository.GetRequirement(requirementId);
+                //TODO: in future, convert arrays to lists so we can use methods like "Contains" that would be more readable
+                if (Array.Exists(requirement.Courses, requirementCourse => requirementCourse == studentCourse.Id))
+                {
+                    return new StudentRequirementCourse { Course = studentCourse, Requirement = requirement };
+                }
+            }
+            return null;
+        }
+
+        //for each course in requirement, check for matching student course. If found, check if grade meets requirement
+        //and assign credit. If credits are sufficient for requirement, student passes requirement.
+        private Boolean StudentPassesRequirement (int requirementId, List<StudentRequirementCourse> studentRequirementCourses){
+            Requirement requirement = repository.GetRequirement(requirementId);
+            int creditsPassed = 0;
+            foreach(int requirementCourseId in requirement.Courses){
+                StudentRequirementCourse studentRequirementCourse = studentRequirementCourses.Find(x => x.Course.Id == requirementCourseId && x.Requirement.Id == requirementId);
+                if (studentRequirementCourse!=null) {
+                    Course studentCourse = studentRequirementCourse.Course;
+                    if (studentCourse.Mark < 0 || studentCourse.Mark > 100)
+                    {
+                        throw new System.ArgumentOutOfRangeException("student", "Student course mark not between 0 to 100");
+                    }
+
+                    if (studentCourse.Mark >= requirement.MinimumMark)
+                    {
+                        creditsPassed += 1;
+                    }
+                }
+            }
+            return creditsPassed >= requirement.Credits;
         }
 
         private Standing GetStandingFromCourses(List<Course> courses)
